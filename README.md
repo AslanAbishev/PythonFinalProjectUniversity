@@ -48,4 +48,4 @@ PyMySQL: pip install PyMySQL
 PyYAML: pip install PyYAML
 Werkzeug: (Usually comes with Flask, but if needed) pip install Werkzeug
 
-And finally copy use rest of the code
+And finally copy rest of the code
