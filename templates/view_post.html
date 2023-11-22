@@ -1,0 +1,33 @@
+{% include 'header.html' %}
+
+<div class="container mt-4">
+    <h1 class="mb-3">{{ post.title }}</h1>
+    <p><small>Posted by {{ post.username }} on {{ post.created_at }}</small></p>
+    <p>{{ post.content }}</p>
+
+    <h3 class="mt-4">Comments</h3>
+    {% for comment in comments %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <p class="card-text">{{ comment.username }} says: {{ comment.content }}</p>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="card bg-light mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Add a Comment</h5>
+            <form action="/post_comment" method="post">
+                <input type="hidden" name="post_id" value="{{ post.id }}">
+                <div class="form-group">
+                    <textarea class="form-control" name="content" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Post Comment</button>
+            </form>
+        </div>
+    </div>
+
+    <a href="/blog" class="btn btn-secondary mt-4">Back to Blog</a>
+</div>
+
+{% include 'footer.html' %}

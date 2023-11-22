@@ -1,0 +1,12 @@
+{% include 'header.html' %}
+<div class="container mt-4">
+    <h2 class="mb-4">Welcome to the Wall from Wolf street</h2>
+    <form action="/search" method="post" class="form-inline">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="symbol" class="sr-only">Enter Stock Symbol:</label>
+            <input type="text" class="form-control" id="symbol" name="symbol" placeholder="Enter Stock Symbol" required>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Search</button>
+    </form>
+</div>
+

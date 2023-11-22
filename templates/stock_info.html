@@ -1,0 +1,77 @@
+{% include 'header.html' %}
+<div class="container mt-4">
+    <h1>{{ symbol }} Stock Information</h1>
+
+    <div class="mt-3">
+        <h2>Stock Price Statistics</h2>
+        <p>Minimum Price: <span id="minPrice">{{ min_price }}</span></p>
+        <p>Maximum Price: <span id="maxPrice">{{ max_price }}</span></p>
+    </div>
+
+    <div class="mt-3">
+        <h2>Add {{ symbol }} to Your Portfolio</h2>
+        <form action="/add_stock_to_portfolio" method="post">
+            <input type="hidden" name="stock_symbol" value="{{ symbol }}">
+
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" required>
+            </div>
+
+            <p>Current Price: <span id="currentPrice">{{ current_price }}</span></p>
+            <p>Current Date: <span id="currentDate">{{ current_date }}</span></p>
+
+            <button type="submit" class="btn btn-primary">Add to Portfolio</button>
+        </form>
+    </div>
+
+    <div class="mt-3">
+        <h2>Stock Price Graph</h2>
+        <div class="form-group">
+            <label for="dateRange">Select Date Range:</label>
+            <input type="text" class="form-control" id="dateRange" placeholder="Select date range">
+            <button onclick="updateGraph()" class="btn btn-secondary mt-2">Update Graph</button>
+        </div>
+        <img id="stockGraph" src="data:image/png;base64,{{ plot_url }}" alt="Stock Price Graph" class="img-fluid">
+    </div>
+</div>
+
+<script>
+    flatpickr("#dateRange", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+    });
+
+    function updateGraph() {
+        var selectedDates = document.getElementById("dateRange").value;
+        var symbol = "{{ symbol }}";
+        var dateRange = selectedDates.split(" to ");
+
+        if (dateRange.length < 2 || !dateRange[0] || !dateRange[1]) {
+            console.error('Please select a valid date range.');
+            return; // Exit the function if date range is not valid
+        }
+
+        var startDate = dateRange[0];
+        var endDate = dateRange[1];
+        console.log(`Requesting graph for ${symbol} from ${startDate} to ${endDate}`);
+        fetch(`/update_graph/${symbol}/${startDate}/${endDate}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.error) {
+                    console.error('Error:', data.error);
+                    return;
+                }
+                document.getElementById("stockGraph").src = `data:image/png;base64,${data.plot_url}`;
+                document.getElementById("minPrice").textContent = data.min_price;
+                document.getElementById("maxPrice").textContent = data.max_price;
+            })
+            .catch(error => console.error('Error updating graph:', error));
+    }
+</script>
+{% include 'footer.html' %}
